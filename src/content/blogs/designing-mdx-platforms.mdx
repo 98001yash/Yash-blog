@@ -1,0 +1,37 @@
+---
+title: Designing MDX Platforms for Developer Content
+description: The architecture decisions that keep a content-driven Next.js site maintainable as posts and contributors grow.
+date: 2026-02-18
+tags:
+  - MDX
+  - Architecture
+  - Content Systems
+readingTime: 7 min read
+published: true
+---
+
+## Why MDX is the right abstraction
+
+MDX works well for developer-facing platforms because it keeps content close to the codebase while still allowing rich formatting. That means you can build publishing workflows that feel lightweight without losing structural control.
+
+## Designing for scale from day one
+
+A simple content setup becomes fragile when there is no clear boundary between parsing, querying, and rendering. The approach used in this project separates those concerns:
+
+- **`src/content`** stores raw authored content.
+- **`src/lib/content.ts`** owns collection loading and sorting.
+- **`src/components/mdx-renderer.tsx`** handles rendering concerns.
+
+## Rendering code blocks and rich content
+
+```ts
+export function getAllBlogs() {
+  return getCollection<BlogFrontmatter>('blogs');
+}
+```
+
+Once content loading is isolated, the rest of the app can consume typed entries rather than filesystem details.
+
+## Tags as a navigation primitive
+
+Tags should be metadata, not presentation logic. Keeping them in frontmatter allows them to power search, filtering, or related-content modules later without changing the content model.
